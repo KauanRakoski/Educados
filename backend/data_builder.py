@@ -50,8 +50,7 @@ class DataFactory:
     
     def filter_by_states (self, states: list) -> None:
         """Given a list of states, filters the dataframe"""
-        for state in states:
-            self.data = self.data[self.data['SG_UF'] == state]
+        self.data = self.data[self.data['SG_UF'].isin(states)]
             
     def _state_value (self, state: str) -> int:
         if state == "RS":
@@ -69,23 +68,32 @@ class DataFactory:
         
         return 2
 
+    def ideb_value (self, value_str: str) -> float:
+        if value_str != '-':
+            return float(value_str)
+        return 0
+        
     def pipeline_to_file(self, path_to_file: str) -> None:
         self.load_csv(path_to_file)
         self.filter_by_states(['RS', 'SC', 'PR'])
         
-        for row in self.data.itertuples(index=False):
-            m = Municipio(
-                cod_municipio= row.COD_MUNICIPIO,
-                nome = row.NOME_MUNICIPIO,
-                estado = self._state_value(row.SG_UF),
-                rede = self._rede_value(row.REDE),
-                ideb2017=float(row.IDEB_2017),
-                ideb2019=float(row.IDEB_2019),
-                ideb2021=float(row.IDEB_2021),
-                ideb2023=float(row.IDEB_2023)
-            )
-            
-            with open('data.bin', 'wb') as f:
+        print(self.data.columns)
+    
+        
+        with open('data.bin', 'wb') as f:
+            for index, row in self.data.iterrows():
+                
+                m = Municipio(
+                   cod_municipio= row['COD_MUNICIPIO'],
+                   nome = row['NOME_MUNICIPIO'],
+                   estado = self._state_value(row['SG_UF']),
+                   rede = self._rede_value(row['REDE']),
+                   ideb2017=self.ideb_value(row['IDEB_2017']),
+                   ideb2019=self.ideb_value(row['IDEB_2019']),
+                   ideb2021=self.ideb_value(row['IDEB_2021']),
+                   ideb2023=self.ideb_value(row['IDEB_2023'])
+                )
+
                 f.write(m.to_bytes())
         
         
