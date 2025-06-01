@@ -1,0 +1,22 @@
+input {
+    border: none;
+    width: 300px;
+    padding: 15px;
+    outline: none;
+    background-color: #E1E1E1;
+    border-radius: 10px;
+}
+i {
+    position: absolute;
+    left: 315px;
+    margin-top: 13px;
+    transform:scaleX(-1);
+}
+select {
+    margin: 10px 5px 20px 0;
+    border: none;
+    padding: 10px;
+    outline: none;
+    background-color: #E1E1E1;
+    border-radius: 10px;
+}

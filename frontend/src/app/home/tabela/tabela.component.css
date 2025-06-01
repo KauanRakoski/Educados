@@ -1,0 +1,24 @@
+table{
+     -webkit-border-radius: 10px;
+       -moz-border-radius: 10px;
+            border-radius: 10px !important;
+    border-spacing:0;
+    border: 1px solid #ccc;
+   
+}
+thead {
+    background-color: #4E71FF;  
+    color: white;
+}
+th, td {
+    padding: 0.5em 1em 0.5em 1em;
+}
+th:nth-child(1){
+    border-radius: 10px 0 0 0;
+}
+th:nth-child(7){
+    border-radius: 0 10px 0 0;
+}
+tr:nth-child(even){
+    background-color: #EFEDED;
+}
