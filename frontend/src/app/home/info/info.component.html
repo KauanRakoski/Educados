@@ -1,1 +1,26 @@
-<p>info works!</p>
+<section>
+  <div id="chart">
+    <apx-chart
+      [series]="chartOptions.series!"
+      [chart]="chartOptions.chart!"
+      [markers]="chartOptions.markers!"
+      [xaxis]="chartOptions.xaxis!"
+      [dataLabels]="chartOptions.dataLabels!"
+      [grid]="chartOptions.grid!"
+      [stroke]="chartOptions.stroke!"
+      [title]="chartOptions.title!"
+    ></apx-chart>
+  </div>
+
+  <div id="estados">
+    <apx-chart
+      [series]="BarChartOpt.series!"
+      [chart]="BarChartOpt.chart!"
+      [xaxis]="BarChartOpt.xaxis!"
+      [dataLabels]="BarChartOpt.dataLabels!"
+      [grid]="BarChartOpt.grid!"
+      [stroke]="BarChartOpt.stroke!"
+      [title]="BarChartOpt.title!"
+    ></apx-chart>
+  </div>
+</section>

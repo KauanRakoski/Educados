@@ -1,3 +1,8 @@
 .container {
     padding: 15px;
 }
+
+.main {
+    display: flex;
+    align-items: flex-start;
+}
