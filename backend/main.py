@@ -2,8 +2,14 @@ from data_builder import DataFactory, Municipio
 import os
 import struct
 
-PACK_STR = 'i50siiffff'
+PACK_STR = 'i50si'
 PACK_SIZE = struct.calcsize(PACK_STR)
+
+REDE_PACK_STR = 'iffff'
+REDE_PACK_SIZE = struct.calcsize(REDE_PACK_STR)
+
+NUM_REDES = 3
+TOTAL_SIZE = PACK_SIZE + (NUM_REDES * REDE_PACK_SIZE)
 
 def main():
     datafact = DataFactory()
@@ -13,7 +19,7 @@ def main():
     
     with open(path, "rb") as f:
         while True:
-            buf = f.read(PACK_SIZE)
+            buf = f.read(TOTAL_SIZE)
             if not buf:
                 break
             m = Municipio.get_bytes(buf)
