@@ -1,6 +1,8 @@
 from data_builder import DataFactory, Municipio
 import os
 import struct
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 PACK_STR = 'i50si'
 PACK_SIZE = struct.calcsize(PACK_STR)
