@@ -2,6 +2,7 @@ import pandas as pd
 from pandas import DataFrame
 from dataclasses import dataclass
 import struct
+from pydantic import BaseModel
 
 PACK_STR = 'i50si'
 PACK_SIZE = struct.calcsize(PACK_STR)
@@ -181,5 +182,6 @@ class DataFactory:
                 )
             
                 f.write(m.to_bytes())
-        
+
+
         
