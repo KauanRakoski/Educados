@@ -16,6 +16,8 @@ REDE_PUBLICA = 0
 REDE_ESTADUAL = 1
 REDE_FEDERAL = 2
 
+#Absolute size of a Municipio Entity in data.bin
+TOTAL_SIZE = PACK_SIZE + (NUM_REDES * REDE_PACK_SIZE)
 
 #OLD DEFINITION
 #class RedesOut(BaseModel):
@@ -125,44 +127,6 @@ class Municipio:
         return cls(cod_municipio, nome, estado, redes_data)
     
 
-class Trie_Node:
-    def __init__(self):
-        is_word = False
-        self.children = dict()
-        self.offset = int()
-    
-
-class Trie:
-
-    def __init__(self):
-        root = Trie_Node()
-    
-    #given a string (Municipio's name) and its respective object offset (data.bin), inserts it into the TRIE
-    def insert(self, word, offset):
-        current_node = self.root
-
-        for c in word:
-            if c in current_node.children:
-                current_node.children[c] = Trie_Node()
-            
-            current_node = current_node.children[c]
-        
-        current_node.is_word = True
-        current_node.offset = offset
-    
-    #given a string (Municipio's name) returns its respective object offset (data.bin).
-    #If the object does not exists, returns -1
-    def search(self, word):
-        current_node = self.root
-
-        for c in word:
-            if c not in current_node.children:
-                return -1
-            current_node = current_node.children[c]
-
-        return current_node.offset
-    
-
 class DataFactory:
     data = pd.DataFrame()
     
@@ -195,7 +159,7 @@ class DataFactory:
             return float(value_str)
         return 0
         
-    def pipeline_to_file(self, path_to_file: str) -> None:
+    def pipeline_to_file(self, path_to_file: str):
         """
         Loads csv data into a dataframe, applies the necessary filters and aggregates the data.
         Writes the result to a binary file
@@ -209,6 +173,10 @@ class DataFactory:
         # Iterate through groups and print
         
         with open('data.bin', 'wb') as f:
+            
+            counter = 0
+            prefix_tree = Trie()
+
             for _, group_df in grouped_data:
                 sg_uf = group_df['SG_UF'].iloc[0]
                 cod_municipio = group_df['COD_MUNICIPIO'].iloc[0]
@@ -247,6 +215,10 @@ class DataFactory:
                 )
             
                 f.write(m.to_bytes())
+                prefix_tree.insert(nome_municipio, (counter  * TOTAL_SIZE))
+                counter = counter + 1
+            return prefix_tree
+                
 
 
 #Takes a dataframe as input and returns a list of MunicipiosOut (POR FAZER)
@@ -294,3 +266,83 @@ def df_to_list(datafr) -> List[MunicipioOut]:
         municipios_dict[cod_mun].redes.append(rede_obj)
 
     return list(municipios_dict.values())
+
+
+class Trie_Node:
+    def __init__(self):
+        self.is_word = False
+        self.children = dict()
+        self.offset = int()
+    
+
+class Trie:
+
+    def __init__(self):
+        self.root = Trie_Node()
+    
+    #given a string (Municipio's name) and its respective object offset (data.bin), inserts it into the TRIE
+    def insert(self, word, offset):
+        current_node = self.root
+
+        for c in word:
+            if c not in current_node.children:
+                current_node.children[c] = Trie_Node()
+            
+            current_node = current_node.children[c]
+        
+        current_node.is_word = True
+        current_node.offset = offset
+    
+    #given a string (Municipio's name) returns its respective object offset (data.bin).
+    #If the object does not exists, returns -1
+    def search(self, word):
+        current_node = self.root
+
+        for c in word:
+            if c not in current_node.children:
+                return -1
+            current_node = current_node.children[c]
+
+        if current_node.is_word:
+            return current_node.offset
+        
+    def starts_with(self, prefix):
+        words = []
+        current_node = self.root
+
+        for c in prefix:
+            if c not in current_node.children:
+                return words
+            current_node = current_node.children[c]
+        
+        def _dfs(current_node, path):
+            if current_node.is_word:
+                words.append(''.join(path))
+
+            for c, child_node in current_node.children.items():
+                _dfs(child_node,path + [c])
+        
+        _dfs(current_node, list(prefix))
+
+        return words
+    
+    def show_all(self):
+
+        words = []
+
+        def _dfs(current_node, path):
+            if current_node.is_word:
+                words.append(''.join(path))
+
+            for c, child_node in current_node.children.items():
+                _dfs(child_node,path + [c])
+            
+        _dfs(self.root, [])
+
+        return words
+        
+    def to_bytes(self):
+        pass
+    
+    def get_bytes(self):
+        pass
