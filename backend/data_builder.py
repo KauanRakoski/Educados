@@ -3,6 +3,7 @@ from pandas import DataFrame
 from dataclasses import dataclass
 import struct
 from pydantic import BaseModel
+from typing import List
 
 PACK_STR = 'i50si'
 PACK_SIZE = struct.calcsize(PACK_STR)
@@ -14,6 +15,31 @@ NUM_REDES = 3
 REDE_PUBLICA = 0
 REDE_ESTADUAL = 1
 REDE_FEDERAL = 2
+
+
+#OLD DEFINITION
+#class RedesOut(BaseModel):
+#    rede: str
+#    ideb2017: float
+#    ideb2019: float
+#    ideb2021: float
+#    ideb2023: float
+
+#NEW DEFINITION
+class RedesOut(BaseModel):
+    rede: int
+    ideb2017: float
+    ideb2019: float
+    ideb2021: float
+    ideb2023: float
+class MunicipioOut(BaseModel):
+    cod_municipio: int
+    nome: str
+    estado: str
+    redes: List[RedesOut]
+
+class ListMunicipioOut(BaseModel):
+    municipios: List[MunicipioOut]
 
 @dataclass
 class Rede:
@@ -97,6 +123,45 @@ class Municipio:
             offset += REDE_PACK_SIZE
 
         return cls(cod_municipio, nome, estado, redes_data)
+    
+
+class Trie_Node:
+    def __init__(self):
+        is_word = False
+        self.children = dict()
+        self.offset = int()
+    
+
+class Trie:
+
+    def __init__(self):
+        root = Trie_Node()
+    
+    #given a string (Municipio's name) and its respective object offset (data.bin), inserts it into the TRIE
+    def insert(self, word, offset):
+        current_node = self.root
+
+        for c in word:
+            if c in current_node.children:
+                current_node.children[c] = Trie_Node()
+            
+            current_node = current_node.children[c]
+        
+        current_node.is_word = True
+        current_node.offset = offset
+    
+    #given a string (Municipio's name) returns its respective object offset (data.bin).
+    #If the object does not exists, returns -1
+    def search(self, word):
+        current_node = self.root
+
+        for c in word:
+            if c not in current_node.children:
+                return -1
+            current_node = current_node.children[c]
+
+        return current_node.offset
+    
 
 class DataFactory:
     data = pd.DataFrame()
@@ -184,4 +249,48 @@ class DataFactory:
                 f.write(m.to_bytes())
 
 
-        
+#Takes a dataframe as input and returns a list of MunicipiosOut (POR FAZER)
+def df_to_list(datafr) -> List[MunicipioOut]:
+
+    estados_map = {"RS": 0, "SC": 1, "PR": 2}
+
+    municipios_dict = {}
+
+    for _,row in datafr.iterrows():
+        cod_mun = row['COD_MUNICIPIO']
+
+        if cod_mun  not in municipios_dict:
+            mun = MunicipioOut(
+                cod_municipio = cod_mun,
+                nome = row['NOME_MUNICIPIO'],
+                estado = row['SG_UF'],
+                redes = []
+            )
+
+        municipios_dict[cod_mun] = mun
+
+        id17 = -1
+        id19 = -1
+        id21 = -1
+        id23 = -1
+
+        if row['IDEB_2017'] != '-':
+            id17 = float(row['IDEB_2017'])
+        if row['IDEB_2019'] != '-':
+            id19 = float(row['IDEB_2019'])
+        if row['IDEB_2021'] != '-':
+            id21 = float(row['IDEB_2021'])
+        if row['IDEB_2023'] != '-':
+            id23 = float(row['IDEB_2023'])
+       
+        rede_obj = RedesOut(
+            rede = row['REDE'],
+            ideb2017 = id17,
+            ideb2019 = id19,
+            ideb2021 = id21,
+            ideb2023 = id23
+        )
+
+        municipios_dict[cod_mun].redes.append(rede_obj)
+
+    return list(municipios_dict.values())
