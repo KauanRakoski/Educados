@@ -9,7 +9,7 @@ export class ApiService {
 
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: "localhost:8000",
+      baseURL: "http://localhost:8000",
       headers: {
         "content-type": "application/json"
       }
@@ -18,7 +18,7 @@ export class ApiService {
 
   async get<T> (url: string): Promise<T>{
     try {
-      let response = await axios.get(url)
+      let response = await this.axiosInstance.get(url)
       return response.data
     } catch(err){
       console.log("An error ocurred: ", err)

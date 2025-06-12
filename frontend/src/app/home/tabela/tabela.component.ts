@@ -1,14 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from '../../data.service';
-
-interface Dados {
-  estado: string, 
-  cidade: string, 
-  tipo: string, 
-  ideb2019: number, 
-  ideb2021: number, 
-  ideb2023: number
-}
+import { ApiService } from '../../api.service';
+import {ApiResponse, Municipio} from '../../models/cities'
 
 @Component({
   selector: 'app-tabela',
@@ -17,10 +10,29 @@ interface Dados {
   styleUrl: './tabela.component.css'
 })
 export class TabelaComponent implements OnInit{
-  constructor(private DataService: DataService){}
-  data: Dados[] = []
+  private api = inject(ApiService)
 
-  ngOnInit(){
-    this.data = this.DataService.getData()
+  data: Municipio[] = []
+
+  async ngOnInit(){
+    let response: ApiResponse = await this.api.get<ApiResponse>("/dados");
+    this.data = response.municipios;
+  }
+
+  truncateFloat(num: number){
+    return num.toFixed(2)
+  }
+
+  redeFromCode(code: number){
+    switch (code){
+      case 0: 
+        return "Pública"
+      case 1:
+        return "Estadual"
+      case 2:
+        return "Federal"
+      default:
+        return "Indefinido"
+    }
   }
 }

@@ -3,7 +3,7 @@
     <thead>
         <th>Estado</th>
         <th>Cidade</th>
-        <th>Tipo</th>
+        <th>Rede</th>
         <th>IDEB 2017</th>
         <th>IDEB 2019</th>
         <th>IDEB 2021</th>
@@ -14,12 +14,12 @@
         @for (stat of data; track stat){
             <tr>
                 <td>{{stat.estado}}</td>
-                <td>{{stat.cidade}}</td>
-                <td>{{stat.tipo}}</td>
-                <td>4</td>
-                <td>{{stat.ideb2019}}</td>
-                <td>{{stat.ideb2021}}</td>
-                <td>{{stat.ideb2023}}</td>
+                <td>{{stat.nome}}</td>
+                <td>{{redeFromCode(stat.redes[0].rede)}}</td>
+                <td>{{truncateFloat(stat.redes[0].ideb2017)}}</td>
+                <td>{{truncateFloat(stat.redes[0].ideb2019)}}</td>
+                <td>{{truncateFloat(stat.redes[0].ideb2021)}}</td>
+                <td>{{truncateFloat(stat.redes[0].ideb2023)}}</td>
             </tr>
         }
     </tbody>
