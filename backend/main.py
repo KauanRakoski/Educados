@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, df_to_list, Trie, Trie_Node
+from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, df_to_list, Trie, Trie_Node, Trie_Root
 import os
 import struct
 from fastapi import FastAPI
@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import uvicorn
-from data_searcher import extract_municipios
+from data_searcher import extract_municipios, extract_state
 
 
 PACK_STR = 'i50si'
@@ -52,36 +52,37 @@ app.add_middleware(
 def get_towns():
     return extract_municipios()
 
-@app.get('/RS', response_model = ListMunicipioOut)
+@app.get('/dados/RS', response_model = ListMunicipioOut)
 def get_RS():
-    pass
+    return extract_state(0, r)
 
-@app.get('/SC', response_model = ListMunicipioOut)
+@app.get('/dados/SC', response_model = ListMunicipioOut)
 def get_SC():
-    pass
+    return extract_state(1, r)
 
-@app.get('/PR', response_model = ListMunicipioOut)
+@app.get('/dados/PR', response_model = ListMunicipioOut)
 def get_PR():
-    pass
+    return extract_state(2, r)
 
-@app.get('/estadual', response_model = ListMunicipioOut)
-def get_estadual():
-    pass
+#@app.get('/estadual', response_model = ListMunicipioOut)
+#def get_estadual():
+#    pass
 
-@app.get('/publica', response_model = ListMunicipioOut)
-def get_publica():
-    pass
+#@app.get('/publica', response_model = ListMunicipioOut)
+#def get_publica():
+#    pass
 
-@app.get('/federal', response_model = ListMunicipioOut)
-def get_federal():
-    pass
+#@app.get('/federal', response_model = ListMunicipioOut)
+#def get_federal():
+#    pass
+
 
 #inicio main
 if __name__ == "__main__":
 
-    a = Trie()
+    r = Trie_Root()
     datafact = DataFactory()
-    a = datafact.pipeline_to_file("data.csv")
+    r = datafact.pipeline_to_file("data.csv")
     
 #    path = os.path.join(os.path.dirname(__file__), "data.bin")
     
@@ -92,29 +93,7 @@ if __name__ == "__main__":
 #                break
 #            m = Municipio.get_bytes(buf)
 #            print(m)
-    #uvicorn.run(app, host = "0.0.0.0", port = 5000)
+    uvicorn.run(app, host = "0.0.0.0", port = 5000)
 
-   #lista_mun = ListMunicipioOut(municipios = [])
-   # lista_mun = extract_municipios()
-   # print(lista_mun.municipios)
-
-    print(a.search('Abatiá'))
-    print(a.search('Adrianópolis'))
-    print(a.search('Agudos do Sul'))
-    print(a.search('lol'))
-
-    t  =Trie()
-
-    t.insert('hello', 0)
-    t.insert('henry', 0)
-    t.insert('mike', 0)
-    t.insert('minimal', 0)
-    t.insert('minimum', 0)
-    t.insert('mini', 0)
-
-    print(t.show_all())
-    print(t.starts_with('mi'))
-    print(t.starts_with('mini'))
-    print(t.starts_with('minim'))
 
 #fim main

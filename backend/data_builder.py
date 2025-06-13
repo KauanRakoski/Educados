@@ -175,7 +175,7 @@ class DataFactory:
         with open('data.bin', 'wb') as f:
             
             counter = 0
-            prefix_tree = Trie()
+            prefix_root_tree = Trie_Root()
 
             for _, group_df in grouped_data:
                 sg_uf = group_df['SG_UF'].iloc[0]
@@ -215,9 +215,9 @@ class DataFactory:
                 )
             
                 f.write(m.to_bytes())
-                prefix_tree.insert(nome_municipio, (counter  * TOTAL_SIZE))
+                prefix_root_tree.states[self._state_value(sg_uf)].insert(nome_municipio, (counter  * TOTAL_SIZE))
                 counter = counter + 1
-            return prefix_tree
+            return prefix_root_tree
                 
 
 
@@ -272,7 +272,7 @@ class Trie_Node:
     def __init__(self):
         self.is_word = False
         self.children = dict()
-        self.offset = int()
+        self.offset = []      #There can be more than one town with the same name
     
 
 class Trie:
@@ -291,7 +291,7 @@ class Trie:
             current_node = current_node.children[c]
         
         current_node.is_word = True
-        current_node.offset = offset
+        current_node.offset.append(offset)
     
     #given a string (Municipio's name) returns its respective object offset (data.bin).
     #If the object does not exists, returns -1
@@ -300,7 +300,7 @@ class Trie:
 
         for c in word:
             if c not in current_node.children:
-                return -1
+                return []
             current_node = current_node.children[c]
 
         if current_node.is_word:
@@ -340,9 +340,28 @@ class Trie:
         _dfs(self.root, [])
 
         return words
+    
+    def show_all_offsets(self):
+        offsets = []
+
+        def _dfs(current_node):
+            if current_node.is_word:
+                offsets.extend(current_node.offset)  # adiciona todos os offsets da lista
+
+            for _, child_node in current_node.children.items():
+                _dfs(child_node)
+    
+        _dfs(self.root)
+
+        return offsets
         
     def to_bytes(self):
         pass
     
     def get_bytes(self):
         pass
+
+
+class Trie_Root:
+    def __init__(self):
+        self.states = {0: Trie(), 1: Trie(), 2: Trie()} # 0 - RS, 1 - SC, - 2 PR
