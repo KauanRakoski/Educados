@@ -171,6 +171,52 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
         
     return lista_municipios
 
+def extract_state_name(r:Trie_Root, name : str, state:int) -> MunicipioOut:
+    offset = r.states[state].search(name)[0]
+
+    path = os.path.join(os.path.dirname(__file__), "data.bin")
+
+    with open(path, "rb") as f:
+        f.seek(offset)
+        buf = f.read(TOTAL_SIZE)
+
+        m = Municipio.get_bytes(buf)
+
+        if m.estado == 0:
+            state_value = 'RS'
+        elif m.estado == 1:
+            state_value = 'SC'
+        else:
+            state_value = 'PR'
+
+        list_redes: list[RedesOut] = []
+
+
+        for j in range(NUM_REDES):
+
+            r = RedesOut(
+                rede = m.redes[j].rede, #mudar para string se necessário
+                ideb2017 = m.redes[j].ideb2017,
+                ideb2019 = m.redes[j].ideb2019,
+                ideb2021 = m.redes[j].ideb2021,
+                ideb2023 = m.redes[j].ideb2023
+            )
+
+            list_redes.append(r)
+
+        munout = MunicipioOut(
+            cod_municipio = m.cod_municipio,
+            nome = m.nome,
+            estado = state_value,
+            redes = list_redes
+        )
+    
+    return munout
+
+
+
+
+
     
     
 

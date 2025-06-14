@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import uvicorn
-from data_searcher import extract_municipios, extract_state, extract_town_by_name
+from data_searcher import extract_municipios, extract_state, extract_town_by_name, extract_state_name
 
 
 PACK_STR = 'i50si'
@@ -19,15 +19,6 @@ NUM_REDES = 3
 
 #Absolute size of a Municipio Entity in data.bin
 TOTAL_SIZE = PACK_SIZE + (NUM_REDES * REDE_PACK_SIZE)
-
-
-
-#class ListMunicipioOut(BaseModel):
-    
-#    municipios = List[MunicipioOut]
-
-#    def __init__(self, municipio: MunicipioOut):
-#        self.municipios = municipio
 
 app = FastAPI()
 
@@ -43,10 +34,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     )
-
-#@app.get("/dados", response_model = ListMunicipioOut)
-#def get_towns():
-#    return ListMunicipioOut(municipios = df_to_list(datafact.data))
 
 @app.get("/dados", response_model = ListMunicipioOut)
 def get_towns():
@@ -64,23 +51,22 @@ def get_SC():
 def get_PR():
     return extract_state(2, r)
 
-#@app.get('/estadual', response_model = ListMunicipioOut)
-#def get_estadual():
-#    pass
-
-#@app.get('/publica', response_model = ListMunicipioOut)
-#def get_publica():
-#    pass
-
-#@app.get('/federal', response_model = ListMunicipioOut)
-#def get_federal():
-#    pass
-
-#isso
 @app.get('/dados/name', response_model = ListMunicipioOut)
 def get_town_by_name(name:str):
     return extract_town_by_name(r, name)
-#isso'
+
+@app.get('/dados/RS/name', response_model = MunicipioOut)
+def get_RS_name(name:str):
+    return extract_state_name(r, name, 0)
+
+@app.get('/dados/SC/name', response_model = MunicipioOut)
+def get_SC_name(name:str):
+    return extract_state_name(r, name, 1)
+
+@app.get('/dados/PR/name', response_model = MunicipioOut)
+def get_PR_name(name:str):
+    return extract_state_name(r, name, 2)
+
 
 #inicio main
 if __name__ == "__main__":
@@ -99,7 +85,5 @@ if __name__ == "__main__":
 #            m = Municipio.get_bytes(buf)
 #            print(m)
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
-
-
 
 #fim main
