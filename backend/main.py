@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import uvicorn
-from data_searcher import extract_municipios, extract_state
+from data_searcher import extract_municipios, extract_state, extract_town_by_name
 
 
 PACK_STR = 'i50si'
@@ -76,6 +76,11 @@ def get_PR():
 #def get_federal():
 #    pass
 
+#isso
+@app.get('/dados/name', response_model = ListMunicipioOut)
+def get_town_by_name(name:str):
+    return extract_town_by_name(r, name)
+#isso'
 
 #inicio main
 if __name__ == "__main__":
@@ -94,6 +99,7 @@ if __name__ == "__main__":
 #            m = Municipio.get_bytes(buf)
 #            print(m)
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
+
 
 
 #fim main
