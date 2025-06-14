@@ -305,6 +305,7 @@ class Trie:
 
         if current_node.is_word:
             return current_node.offset
+        return []
         
     def starts_with(self, prefix):
         words = []

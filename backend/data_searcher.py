@@ -128,6 +128,9 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
     aux = r.states[2].search(name)
     offsets.extend(aux)
 
+    if len(offsets) == 0:
+        return ListMunicipioOut(municipios = [])
+
     path = os.path.join(os.path.dirname(__file__), "data.bin")
 
     with open(path, "rb") as f:
@@ -172,7 +175,16 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
     return lista_municipios
 
 def extract_state_name(r:Trie_Root, name : str, state:int) -> MunicipioOut:
-    offset = r.states[state].search(name)[0]
+    offsets = r.states[state].search(name)
+    if len(offsets) == 0:
+        return MunicipioOut(
+            cod_municipio = -1,
+            nome = 'n',
+            estado = 'n',
+            redes = []
+        )
+
+    offset = offsets[0]
 
     path = os.path.join(os.path.dirname(__file__), "data.bin")
 
