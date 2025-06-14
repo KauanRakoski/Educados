@@ -174,15 +174,13 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
         
     return lista_municipios
 
-def extract_state_name(r:Trie_Root, name : str, state:int) -> MunicipioOut:
+def extract_state_name(r:Trie_Root, name : str, state:int) -> ListMunicipioOut:
+    
+    lista_municipios = ListMunicipioOut(municipios = [])
     offsets = r.states[state].search(name)
+
     if len(offsets) == 0:
-        return MunicipioOut(
-            cod_municipio = -1,
-            nome = 'n',
-            estado = 'n',
-            redes = []
-        )
+        return lista_municipios
 
     offset = offsets[0]
 
@@ -222,8 +220,10 @@ def extract_state_name(r:Trie_Root, name : str, state:int) -> MunicipioOut:
             estado = state_value,
             redes = list_redes
         )
+
+        lista_municipios.municipios.append(munout)
     
-    return munout
+    return lista_municipios
 
 
 

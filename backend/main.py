@@ -55,15 +55,15 @@ def get_PR():
 def get_town_by_name(name:str):
     return extract_town_by_name(r, name)
 
-@app.get('/dados/RS/name', response_model = MunicipioOut)
+@app.get('/dados/RS/name', response_model = ListMunicipioOut)
 def get_RS_name(name:str):
     return extract_state_name(r, name, 0)
 
-@app.get('/dados/SC/name', response_model = MunicipioOut)
+@app.get('/dados/SC/name', response_model = ListMunicipioOut)
 def get_SC_name(name:str):
     return extract_state_name(r, name, 1)
 
-@app.get('/dados/PR/name', response_model = MunicipioOut)
+@app.get('/dados/PR/name', response_model = ListMunicipioOut)
 def get_PR_name(name:str):
     return extract_state_name(r, name, 2)
 
