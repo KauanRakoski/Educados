@@ -10,18 +10,27 @@
         <th>IDEB 2023</th>
     </thead>
 
-    <tbody>
-        @for (stat of data; track stat){
-            <tr>
-                <td>{{stat.estado}}</td>
-                <td>{{stat.nome}}</td>
-                <td>{{redeFromCode(stat.redes[0].rede)}}</td>
-                <td>{{truncateFloat(stat.redes[0].ideb2017)}}</td>
-                <td>{{truncateFloat(stat.redes[0].ideb2019)}}</td>
-                <td>{{truncateFloat(stat.redes[0].ideb2021)}}</td>
-                <td>{{truncateFloat(stat.redes[0].ideb2023)}}</td>
-            </tr>
+    @if (data | async; as data){
+        @if (data.length > 0){
+            <tbody>
+                @for (stat of data; track stat){
+                    <tr>
+                        <td>{{stat.estado}}</td>
+                        <td>{{stat.nome}}</td>
+                        <td>{{redeFromCode(stat.rede)}}</td>
+                        <td>{{truncateFloat(stat.ideb2017)}}</td>
+                        <td>{{truncateFloat(stat.ideb2019)}}</td>
+                        <td>{{truncateFloat(stat.ideb2021)}}</td>
+                        <td>{{truncateFloat(stat.ideb2023)}}</td>
+                    </tr>
+                }
+            </tbody>
         }
-    </tbody>
+        @else {
+            <tbody>
+                <p>Nenhum resultado encontrado para a busca!</p>
+            </tbody>
+        }
+    }
 </table>
 </div>

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FiltroService } from '../../filtro-service.service';
+
 
 @Component({
   selector: 'app-search',
@@ -7,5 +9,17 @@ import { Component } from '@angular/core';
   styleUrl: './search.component.css'
 })
 export class SearchComponent {
+  private filtroService = inject(FiltroService)
 
+  updateNameFilter(event: Event): void {
+    this.filtroService.updateNameFilter((event.target as HTMLInputElement).value);
+  }
+
+  onEstadoChange(event: Event): void {
+    this.filtroService.updateEstadoFilter((event.target as HTMLSelectElement).value);
+  }
+
+  onRedeChange(event: Event): void {
+    this.filtroService.updateRedeFilter(Number.parseInt((event.target as HTMLSelectElement).value));
+  }
 }

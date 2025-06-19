@@ -17,3 +17,5 @@ export interface Municipio {
 export interface ApiResponse {
     municipios: Municipio[]
 }
+
+export type UnwoundMunicipio = Omit<Municipio, 'redes'> & Rede

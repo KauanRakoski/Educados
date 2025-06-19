@@ -1,12 +1,19 @@
 <form>
     <i class="fa fa-search icon"></i>
-    <input type="text" placeholder="Santa Cidade...">
+    <input type="text" (input)="updateNameFilter($event)" placeholder="Santa Cidade...">
 
     <br>
-    <select name="" id="">
-        <option>Estado</option>
+    <select (change)="onEstadoChange($event)" id="estado">
+        <option value="" default>Estado</option>
+        <option value="RS">RS</option>
+        <option value="SC">SC</option>
+        <option value="PR">PR</option>
     </select>
-    <select>
-        <option>Rede</option>
-    </select>
+    
+    <select (change)="onRedeChange($event)">
+    <option value="">Rede</option>
+    <option value="0">Pública</option>
+    <option value="1">Estadual</option>
+    <option value="2">Federal</option>
+  </select>
 </form>

@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../../data.service';
+import { Observable } from 'rxjs';
 
 import {
   ChartComponent,
@@ -47,9 +48,12 @@ export class InfoComponent{
   @ViewChild("estados") bar!: ChartComponent
   public BarChartOpt: Partial<BarChartOpt>;
 
+  private data_manager = inject(DataService)
   years = []
 
-  constructor(private DataService: DataService){
+  constructor(){
+    
+
     this.chartOptions = {
       series: [
         {
@@ -102,7 +106,7 @@ export class InfoComponent{
       series: [
         {
           name: "Média por estado",
-          data: [5, 3, 2],
+          data: [0, 0, 0, 0],
           color: "#4E71FC"
         }
       ],

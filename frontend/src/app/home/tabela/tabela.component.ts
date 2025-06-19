@@ -1,22 +1,32 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { DataService } from '../../data.service';
 import { ApiService } from '../../api.service';
-import {ApiResponse, Municipio} from '../../models/cities'
+import {ApiResponse, Municipio, UnwoundMunicipio} from '../../models/cities'
+import { filtros } from '../../models/filtos';
+import { FiltroService } from '../../filtro-service.service';
+import { debounceTime, distinctUntilChanged, switchMap, Observable, of } from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-tabela',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './tabela.component.html',
   styleUrl: './tabela.component.css'
 })
 export class TabelaComponent implements OnInit{
-  private api = inject(ApiService)
+  private data_manager = inject(DataService)
+  private filter_service = inject(FiltroService)
 
-  data: Municipio[] = []
+  public data: Observable<UnwoundMunicipio[]> = of([]);
 
-  async ngOnInit(){
-    let response: ApiResponse = await this.api.get<ApiResponse>("/dados");
-    this.data = response.municipios;
+  ngOnInit(){
+    this.data = this.filter_service.filtrosAtuais$.pipe(
+      debounceTime(300),
+      distinctUntilChanged((prev, curr) => prev == curr),
+      switchMap((filtros: filtros) => this.data_manager.getDados(filtros)),
+      map(municipios => this.data_manager.unwind(municipios))
+    )
   }
 
   truncateFloat(num: number){
