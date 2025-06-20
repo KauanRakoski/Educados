@@ -74,6 +74,7 @@ if __name__ == "__main__":
     r = Trie_Root()
     datafact = DataFactory()
     r = datafact.pipeline_to_file("data.csv")
+    print(extract_town_by_name(r, 'S'))
     
 #    path = os.path.join(os.path.dirname(__file__), "data.bin")
     

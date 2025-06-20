@@ -29,7 +29,7 @@ export class DataService {
     }
 
     if (filtros.name){
-      return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados/RS/${filtros.name}`).pipe(
+      return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados/name?name=${filtros.name}`).pipe(
         map(response => response.municipios)
       )
     }
