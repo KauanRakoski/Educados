@@ -121,11 +121,11 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
     aux  = []
     lista_municipios = ListMunicipioOut(municipios = [])
 
-    aux = r.states[0].search(name)
+    aux = r.states[0].starts_with_offset(name)
     offsets.extend(aux)
-    aux = r.states[1].search(name)
+    aux = r.states[1].starts_with_offset(name)
     offsets.extend(aux)
-    aux = r.states[2].search(name)
+    aux = r.states[2].starts_with_offset(name)
     offsets.extend(aux)
 
     if len(offsets) == 0:
@@ -177,51 +177,52 @@ def extract_town_by_name(r:Trie_Root, name : str) -> ListMunicipioOut:
 def extract_state_name(r:Trie_Root, name : str, state:int) -> ListMunicipioOut:
     
     lista_municipios = ListMunicipioOut(municipios = [])
-    offsets = r.states[state].search(name)
+    offsets = r.states[state].starts_with_offset(name)
 
     if len(offsets) == 0:
         return lista_municipios
 
-    offset = offsets[0]
 
     path = os.path.join(os.path.dirname(__file__), "data.bin")
 
     with open(path, "rb") as f:
-        f.seek(offset)
-        buf = f.read(TOTAL_SIZE)
 
-        m = Municipio.get_bytes(buf)
+        for i in offsets:
+            f.seek(i)
+            buf = f.read(TOTAL_SIZE)
 
-        if m.estado == 0:
-            state_value = 'RS'
-        elif m.estado == 1:
-            state_value = 'SC'
-        else:
-            state_value = 'PR'
+            m = Municipio.get_bytes(buf)
 
-        list_redes: list[RedesOut] = []
+            if m.estado == 0:
+                state_value = 'RS'
+            elif m.estado == 1:
+                state_value = 'SC'
+            else:
+                state_value = 'PR'
+
+            list_redes: list[RedesOut] = []
 
 
-        for j in range(NUM_REDES):
+            for j in range(NUM_REDES):
 
-            r = RedesOut(
-                rede = m.redes[j].rede, #mudar para string se necessário
-                ideb2017 = m.redes[j].ideb2017,
-                ideb2019 = m.redes[j].ideb2019,
-                ideb2021 = m.redes[j].ideb2021,
-                ideb2023 = m.redes[j].ideb2023
+                r = RedesOut(
+                    rede = m.redes[j].rede, #mudar para string se necessário
+                    ideb2017 = m.redes[j].ideb2017,
+                    ideb2019 = m.redes[j].ideb2019,
+                    ideb2021 = m.redes[j].ideb2021,
+                    ideb2023 = m.redes[j].ideb2023
+                )
+
+                list_redes.append(r)
+
+            munout = MunicipioOut(
+                cod_municipio = m.cod_municipio,
+                nome = m.nome,
+                estado = state_value,
+                redes = list_redes
             )
 
-            list_redes.append(r)
-
-        munout = MunicipioOut(
-            cod_municipio = m.cod_municipio,
-            nome = m.nome,
-            estado = state_value,
-            redes = list_redes
-        )
-
-        lista_municipios.municipios.append(munout)
+            lista_municipios.municipios.append(munout)
     
     return lista_municipios
 

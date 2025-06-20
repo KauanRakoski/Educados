@@ -24,7 +24,8 @@ app = FastAPI()
 
 origins = [
         #Insert the URL of the frontend server
-        'http://localhost:4200'
+        'http://localhost:4200',
+        'http://localhost:5000'
     ]
 
 app.add_middleware(
@@ -74,7 +75,6 @@ if __name__ == "__main__":
     r = Trie_Root()
     datafact = DataFactory()
     r = datafact.pipeline_to_file("data.csv")
-    print(extract_town_by_name(r, 'S'))
     
 #    path = os.path.join(os.path.dirname(__file__), "data.bin")
     
@@ -86,5 +86,6 @@ if __name__ == "__main__":
 #            m = Municipio.get_bytes(buf)
 #            print(m)
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
+
 
 #fim main

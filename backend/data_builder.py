@@ -355,6 +355,25 @@ class Trie:
         _dfs(self.root)
 
         return offsets
+    
+    def starts_with_offset(self, prefix):
+        offsets = []
+        current_node = self.root
+
+        for c in prefix:
+            if c not in current_node.children:
+                return offsets 
+            current_node = current_node.children[c]
+
+        def _dfs(node):
+            if node.is_word:
+                offsets.extend(node.offset)
+            for child in node.children.values():
+                _dfs(child)
+
+        _dfs(current_node)
+        return offsets
+        
         
     def to_bytes(self):
         pass
