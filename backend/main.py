@@ -4,7 +4,7 @@ import struct
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import uvicorn
 from data_searcher import extract_municipios, extract_state, extract_town_by_name, extract_state_name
 
@@ -35,7 +35,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     )
-
+'''
 @app.get("/dados", response_model = ListMunicipioOut)
 def get_towns():
     return extract_municipios()
@@ -68,6 +68,32 @@ def get_SC_name(name:str):
 def get_PR_name(name:str):
     return extract_state_name(r, name, 2)
 
+@app.get('/dados/teste', response_model = str)
+def teste(name: Optional[str] = None):
+    if name is None or name == "":
+        return "Bazinga"
+    return name
+'''
+
+@app.get('/dados', response_model = ListMunicipioOut)
+def get_data(state: Optional[str] = None, name: Optional[str] = None):
+    if state is None or state == "":
+        if name is None or name == "":
+            return extract_municipios()
+        return extract_town_by_name(r, name)
+    
+    if state == 'RS':
+        status = 0
+    elif state == 'SC':
+        status = 1
+    else:
+        status = 2
+
+    if name is None or name == "":
+        return extract_state(status, r)
+    return extract_state_name(r, name, status)
+    
+    
 
 #inicio main
 if __name__ == "__main__":
