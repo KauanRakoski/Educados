@@ -28,9 +28,18 @@
         }
         @else {
             <tbody>
-                <p>Nenhum resultado encontrado para a busca!</p>
+               <td colspan="5">
+                <p >Nenhum resultado encontrado para a busca!</p>
+               </td> 
             </tbody>
         }
+    } 
+    @else {
+        <tbody>
+               <td colspan="5">
+                <p>Carregando dados...</p>
+               </td> 
+            </tbody>
     }
 </table>
 </div>

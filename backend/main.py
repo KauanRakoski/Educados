@@ -77,6 +77,8 @@ def teste(name: Optional[str] = None):
 
 @app.get('/dados', response_model = ListMunicipioOut)
 def get_data(state: Optional[str] = None, name: Optional[str] = None):
+    print(state == "")
+    print (state)
     if state is None or state == "":
         if name is None or name == "":
             return extract_municipios()

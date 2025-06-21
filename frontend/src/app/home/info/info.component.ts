@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../../data.service';
 import { Observable } from 'rxjs';
+import { UnwoundMunicipio } from '../../models/cities';
 
 import {
   ChartComponent,
@@ -41,7 +42,7 @@ export type BarChartOpt = {
   templateUrl: './info.component.html',
   styleUrl: './info.component.css'
 })
-export class InfoComponent{
+export class InfoComponent implements OnInit{
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
@@ -52,8 +53,6 @@ export class InfoComponent{
   years = []
 
   constructor(){
-    
-
     this.chartOptions = {
       series: [
         {
@@ -141,5 +140,17 @@ export class InfoComponent{
           "PR"
         ]
       }
+    }}
+  
+    ngOnInit(){
+      this.data_manager.dadosAtuais$.subscribe(municipios => {
+        let municipiosUnwound: UnwoundMunicipio[] = this.data_manager.unwind(municipios);
+
+        this.updateGraph()
+      })
     }
-}}
+    
+    updateGraph(){
+      this.chart.updateOptions([])
+    }
+  }

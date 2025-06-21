@@ -5,7 +5,7 @@ import { ApiService } from '../../api.service';
 import {ApiResponse, Municipio, UnwoundMunicipio} from '../../models/cities'
 import { filtros } from '../../models/filtos';
 import { FiltroService } from '../../filtro-service.service';
-import { debounceTime, distinctUntilChanged, switchMap, Observable, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, Observable, of, tap } from 'rxjs';
 import {map} from 'rxjs/operators';
 
 @Component({
@@ -25,6 +25,7 @@ export class TabelaComponent implements OnInit{
       debounceTime(300),
       distinctUntilChanged((prev, curr) => prev == curr),
       switchMap((filtros: filtros) => this.data_manager.getDados(filtros)),
+      tap(municipios => this.data_manager.updateCurrData(municipios)),
       map(municipios => this.data_manager.unwind(municipios))
     )
   }

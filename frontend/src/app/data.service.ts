@@ -1,7 +1,7 @@
 // src/app/services/data.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { ApiResponse, Municipio, UnwoundMunicipio } from './models/cities';
 import { filtros } from './models/filtos';
@@ -11,6 +11,9 @@ import { filtros } from './models/filtos';
 })
 export class DataService {
   private readonly API_BASE_URL = 'http://localhost:5000';
+
+  private dadosAtuaisSubject = new BehaviorSubject<Municipio[]>([]);
+  public dadosAtuais$ = this.dadosAtuaisSubject.asObservable();
 
   constructor (private http: HttpClient){}
 
@@ -22,19 +25,7 @@ export class DataService {
   }
 
   getDados(filtros: filtros): Observable<Municipio[]>{
-    if (filtros.estado){
-      return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados/${filtros.estado}`).pipe(
-        map(response => response.municipios)
-      )
-    }
-
-    if (filtros.name){
-      return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados/name?name=${filtros.name}`).pipe(
-        map(response => response.municipios)
-      )
-    }
-
-    return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados`).pipe(
+    return this.http.get<ApiResponse>(`${this.API_BASE_URL}/dados?state=${filtros.estado}&name=${filtros.name}`).pipe(
       map((response: ApiResponse) => response.municipios)
     )
   }
@@ -49,5 +40,9 @@ export class DataService {
         ...rede
       }));
     });
+  }
+
+  updateCurrData (dados: Municipio[]){
+    this.dadosAtuaisSubject.next(dados)
   }
 }
