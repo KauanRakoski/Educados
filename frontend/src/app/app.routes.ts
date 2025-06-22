@@ -8,7 +8,7 @@ export const routes: Routes = [
         component: HomeComponent
     },
     {
-        path: 'dashboard',
+        path: 'municipio/:cod',
         component: DashboardComponent
     }
 ];

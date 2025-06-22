@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { DataService } from './data.service';
 import {ApiService} from '../app/api.service'
@@ -7,7 +7,7 @@ import {ApiService} from '../app/api.service'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

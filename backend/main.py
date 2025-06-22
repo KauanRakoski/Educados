@@ -35,50 +35,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     )
-'''
-@app.get("/dados", response_model = ListMunicipioOut)
-def get_towns():
-    return extract_municipios()
 
-@app.get('/dados/RS', response_model = ListMunicipioOut)
-def get_RS():
-    return extract_state(0, r)
-
-@app.get('/dados/SC', response_model = ListMunicipioOut)
-def get_SC():
-    return extract_state(1, r)
-
-@app.get('/dados/PR', response_model = ListMunicipioOut)
-def get_PR():
-    return extract_state(2, r)
-
-@app.get('/dados/name', response_model = ListMunicipioOut)
-def get_town_by_name(name:str):
-    return extract_town_by_name(r, name)
-
-@app.get('/dados/RS/name', response_model = ListMunicipioOut)
-def get_RS_name(name:str):
-    return extract_state_name(r, name, 0)
-
-@app.get('/dados/SC/name', response_model = ListMunicipioOut)
-def get_SC_name(name:str):
-    return extract_state_name(r, name, 1)
-
-@app.get('/dados/PR/name', response_model = ListMunicipioOut)
-def get_PR_name(name:str):
-    return extract_state_name(r, name, 2)
-
-@app.get('/dados/teste', response_model = str)
-def teste(name: Optional[str] = None):
-    if name is None or name == "":
-        return "Bazinga"
-    return name
-'''
 
 @app.get('/dados', response_model = ListMunicipioOut)
 def get_data(state: Optional[str] = None, name: Optional[str] = None):
-    print(state == "")
-    print (state)
     if state is None or state == "":
         if name is None or name == "":
             return extract_municipios()
@@ -96,24 +56,10 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
     return extract_state_name(r, name, status)
     
     
-
-#inicio main
 if __name__ == "__main__":
 
     r = Trie_Root()
     datafact = DataFactory()
     r = datafact.pipeline_to_file("data.csv")
     
-#    path = os.path.join(os.path.dirname(__file__), "data.bin")
-    
-#    with open(path, "rb") as f:
-#        while True:
-#            buf = f.read(TOTAL_SIZE)
-#            if not buf:
-#                break
-#            m = Municipio.get_bytes(buf)
-#            print(m)
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
-
-
-#fim main

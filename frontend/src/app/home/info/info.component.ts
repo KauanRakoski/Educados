@@ -105,7 +105,7 @@ export class InfoComponent implements OnInit{
       series: [
         {
           name: "Média por estado",
-          data: [0, 0, 0, 0],
+          data: [0, 0, 0],
           color: "#4E71FC"
         }
       ],
@@ -146,11 +146,85 @@ export class InfoComponent implements OnInit{
       this.data_manager.dadosAtuais$.subscribe(municipios => {
         let municipiosUnwound: UnwoundMunicipio[] = this.data_manager.unwind(municipios);
 
-        this.updateGraph()
+        this.updateGraph(municipiosUnwound)
       })
     }
     
-    updateGraph(){
-      this.chart.updateOptions([])
+    updateGraph(data: UnwoundMunicipio[]){
+      let meanByState = this.calcMeanByState(data)
+      let meanByYear = this.calcMeanByYear(data);
+      let states: string[] = ["RS", "SC", "PR"];
+
+      let removed = 0;
+
+      meanByState.forEach((mean, index) => {
+        if (mean == 0){
+          states.splice(index - removed, 1);
+          removed++;
+        }
+      })
+
+      this.chartOptions.series = [{
+        data: meanByYear
+      }]
+
+      this.BarChartOpt.series = [{
+        data: meanByState.filter(n => n != 0)
+      }]
+
+      this.BarChartOpt.xaxis = {
+        categories: states
+      }
+    }
+
+    calcMeanByState(data: UnwoundMunicipio[]){
+      // RS, SC, PR
+      let sumByState = [0, 0, 0];
+
+      sumByState[0] = this.calcMeanByYear(data.filter(m => m.estado == 'RS')).reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+
+      sumByState[1] = this.calcMeanByYear(data.filter(m => m.estado == 'SC')).reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+
+      sumByState[2] = this.calcMeanByYear(data.filter(m => m.estado == 'PR')).reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+
+      return sumByState.map(sum => Number.parseFloat((sum / 4).toFixed(2)));
+    }
+
+    calcMeanByYear(data: UnwoundMunicipio[]){
+      let means: number[] = [0, 0, 0, 0];
+      let n: number[] = [0, 0, 0, 0];
+
+      data.forEach(municipio => {
+        if (municipio.ideb2017 > 0){
+          means[0] += municipio.ideb2017;
+          n[0]++;
+        }
+        if (municipio.ideb2019 > 0){
+          means[1] += municipio.ideb2019;
+          n[1]++;
+        }
+        if (municipio.ideb2021 > 0){
+          means[2] += municipio.ideb2021;
+          n[2]++;
+        }
+        if (municipio.ideb2023 > 0){
+          means[3] += municipio.ideb2023;
+          n[3]++;
+        }
+      })
+
+      for (let i = 0; i < 4; i++){
+        if (n[i] != 0)
+          means[i] /= n[i];
+        means[i] = Number.parseFloat(means[i].toFixed(2))
+      }
+
+      return means;
     }
   }

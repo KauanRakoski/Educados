@@ -1,0 +1,21 @@
+.container {
+    padding: 1em;
+}
+.data-cells, .data-cell {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.data-cell {
+    margin-right: 30px;
+}
+.data-cell strong {
+    margin-right: 5px;
+}
+.data-show h4 {
+    margin-bottom: 10px;
+}
+.data-interpretation p {
+    max-width: 1300px;
+    line-height: 2;
+}

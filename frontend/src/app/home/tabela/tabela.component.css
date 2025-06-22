@@ -22,6 +22,17 @@ thead {
     position: sticky;
     top: 0;
     z-index: 10;
+    font-size: 15px;
+}
+
+button {
+    background-color: #4E71FF;  
+    color: white;
+    text-align: left;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    font-size: 15px;
 }
 
 tbody {
@@ -34,6 +45,7 @@ th, td {
     padding: 0.5em 1em 0.5em 1em !important;
 }
 
+
 th:nth-child(1){
     border-radius: 10px 0 0 0;
 }
@@ -42,4 +54,9 @@ th:nth-child(7){
 }
 tr:nth-child(even){
     background-color: #EFEDED;
+}
+a {
+    font-weight: bold;
+    color: #4E71FF;
+    text-decoration: none;
 }
