@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, Trie, Trie_Node, Trie_Root, MunicipioBTreeEntry, RedeData, save_trie_root, load_trie_root, save_btree, load_btree
+from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, Trie, Trie_Node, Trie_Root, MunicipioBTreeEntry, RedeData, save_trie_root, load_trie_root, save_btree, load_btree, MunicipioSaebOut
 import os
 import struct
 from fastapi import FastAPI
@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
-from data_searcher import extract_municipios, extract_state, extract_town_by_name, extract_state_name
+from data_searcher import extract_municipios, extract_state, extract_town_by_name, extract_state_name, extract_saeb
 from BTrees.OOBTree import OOBTree
 import pickle
 
@@ -56,7 +56,10 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
     if name is None or name == "":
         return extract_state(status, r)
     return extract_state_name(r, name, status)
-    
+
+#@app.get('/dados/{cod_mun}', response_model = int)
+#def teste(cod_mun : int):
+#    return cod_mun
     
 if __name__ == "__main__":
 

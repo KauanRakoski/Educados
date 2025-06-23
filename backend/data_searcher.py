@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, RedesOut, Trie_Root
+from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, RedesOut, Trie_Root, MunicipioSaebOut, MunicipioBTreeEntry
 import os
 import struct
 from fastapi import FastAPI
@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import uvicorn
+from BTrees.OOBTree import OOBTree
 
 
 PACK_STR = 'i50si'
@@ -225,6 +226,9 @@ def extract_state_name(r:Trie_Root, name : str, state:int) -> ListMunicipioOut:
             lista_municipios.municipios.append(munout)
     
     return lista_municipios
+
+def extract_saeb(cod_mun: int, b: OOBTree) -> MunicipioSaebOut:
+    pass
 
 
 

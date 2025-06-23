@@ -436,6 +436,16 @@ class MunicipioBTreeEntry:
 
     def __repr__(self):
         return f"MunicipioBTreeEntry(cod={self.cod_municipio}, redes={self.redes})"
+    
+class SaebOut:
+    saeb2017: SaebGrades
+    saeb2019: SaebGrades
+    saeb2021: SaebGrades
+    saeb2023: SaebGrades 
+
+class MunicipioSaebOut:
+    redes_ideb: list[RedesOut]
+    redes_saeb: list[SaebOut]   
 
 def save_trie_root(r: Trie_Root):
     with open("trie.bin", "wb") as f:
