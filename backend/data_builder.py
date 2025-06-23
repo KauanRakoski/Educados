@@ -182,15 +182,24 @@ class DataFactory:
         grouped_data = self.data.groupby(['COD_MUNICIPIO'])
         # Iterate through groups and print
         
-        with open('data.bin', 'wb') as f:
+        with open('data2.bin', 'wb') as f:
             
             counter = 0
             prefix_root_tree = Trie_Root()
+            btree = OOBTree() #Criamos uma Btree
+            
 
             for _, group_df in grouped_data:
                 sg_uf = group_df['SG_UF'].iloc[0]
                 cod_municipio = group_df['COD_MUNICIPIO'].iloc[0]
                 nome_municipio = group_df['NOME_MUNICIPIO'].iloc[0]
+
+                mun_btree = MunicipioBTreeEntry(cod_municipio)
+                # dentro do loop do grupo
+                rede_publica = RedeData(REDE_PUBLICA)
+                rede_estadual = RedeData(REDE_ESTADUAL)
+                rede_federal = RedeData(REDE_FEDERAL)
+
                 
                 redes_data: list[Rede] = []
                 
@@ -210,6 +219,38 @@ class DataFactory:
                     )
                     
                     existing_rede[rede_type] = rede
+
+                    if rede_type == REDE_PUBLICA:
+                        rede_publica.set_ideb(2017, rede.ideb2017)
+                        rede_publica.set_ideb(2019, rede.ideb2019)
+                        rede_publica.set_ideb(2021, rede.ideb2021)
+                        rede_publica.set_ideb(2023, rede.ideb2023)
+
+                        rede_publica.set_saeb(2017, math = row['SAEB_MAT_2017'], port = row['SAEB_PORT_2017'], final_grade = row['SAEB_NOTA_2017'])
+                        rede_publica.set_saeb(2019, math = row['SAEB_MAT_2019'], port = row['SAEB_PORT_2019'], final_grade = row['SAEB_NOTA_2019'])
+                        rede_publica.set_saeb(2021, math = row['SAEB_MAT_2021'], port = row['SAEB_PORT_2021'], final_grade = row['SAEB_NOTA_2021'])
+                        rede_publica.set_saeb(2023, math = row['SAEB_MAT_2023'], port = row['SAEB_PORT_2023'], final_grade = row['SAEB_NOTA_2023'])
+                    elif rede_type == REDE_ESTADUAL:
+                        rede_estadual.set_ideb(2017, rede.ideb2017)
+                        rede_estadual.set_ideb(2019, rede.ideb2019)
+                        rede_estadual.set_ideb(2021, rede.ideb2021)
+                        rede_estadual.set_ideb(2023, rede.ideb2023)
+
+                        rede_estadual.set_saeb(2017, math = row['SAEB_MAT_2017'], port = row['SAEB_PORT_2017'], final_grade = row['SAEB_NOTA_2017'])
+                        rede_estadual.set_saeb(2019, math = row['SAEB_MAT_2019'], port = row['SAEB_PORT_2019'], final_grade = row['SAEB_NOTA_2019'])
+                        rede_estadual.set_saeb(2021, math = row['SAEB_MAT_2021'], port = row['SAEB_PORT_2021'], final_grade = row['SAEB_NOTA_2021'])
+                        rede_estadual.set_saeb(2023, math = row['SAEB_MAT_2023'], port = row['SAEB_PORT_2023'], final_grade = row['SAEB_NOTA_2023'])
+                    else:
+                        rede_federal.set_ideb(2017, rede.ideb2017)
+                        rede_federal.set_ideb(2019, rede.ideb2019)
+                        rede_federal.set_ideb(2021, rede.ideb2021)
+                        rede_federal.set_ideb(2023, rede.ideb2023)
+
+                        rede_federal.set_saeb(2017, math = row['SAEB_MAT_2017'], port = row['SAEB_PORT_2017'], final_grade = row['SAEB_NOTA_2017'])
+                        rede_federal.set_saeb(2019, math = row['SAEB_MAT_2019'], port = row['SAEB_PORT_2019'], final_grade = row['SAEB_NOTA_2019'])
+                        rede_federal.set_saeb(2021, math = row['SAEB_MAT_2021'], port = row['SAEB_PORT_2021'], final_grade = row['SAEB_NOTA_2021'])
+                        rede_federal.set_saeb(2023, math = row['SAEB_MAT_2023'], port = row['SAEB_PORT_2023'], final_grade = row['SAEB_NOTA_2023'])
+
                     
                     for i in range(NUM_REDES):
                         if existing_rede[i]:
@@ -227,7 +268,14 @@ class DataFactory:
                 f.write(m.to_bytes())
                 prefix_root_tree.states[self._state_value(sg_uf)].insert(nome_municipio, (counter  * TOTAL_SIZE))
                 counter = counter + 1
-            return prefix_root_tree
+
+                mun_btree.add_rede(rede_publica)
+                mun_btree.add_rede(rede_estadual)
+                mun_btree.add_rede(rede_federal)
+
+                btree[cod_municipio] = mun_btree
+
+            return btree
         
 class Trie_Node:
     def __init__(self):

@@ -61,12 +61,13 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
 if __name__ == "__main__":
 
     r = Trie_Root()
-    #datafact = DataFactory()
+    b = OOBTree()
+#    datafact = DataFactory()
+#    b = datafact.pipeline_to_file("data.csv")
     r = load_trie_root()
+    b = load_btree()
     
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
-
-
 
 
     
