@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, df_to_list, Trie, Trie_Node, Trie_Root
+from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, Trie, Trie_Node, Trie_Root, MunicipioBTreeEntry, RedeData, save_trie_root, load_trie_root, save_btree, load_btree
 import os
 import struct
 from fastapi import FastAPI
@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
 from data_searcher import extract_municipios, extract_state, extract_town_by_name, extract_state_name
+from BTrees.OOBTree import OOBTree
+import pickle
 
 
 PACK_STR = 'i50si'
@@ -59,7 +61,12 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
 if __name__ == "__main__":
 
     r = Trie_Root()
-    datafact = DataFactory()
-    r = datafact.pipeline_to_file("data.csv")
+    #datafact = DataFactory()
+    r = load_trie_root()
     
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
+
+
+
+
+    

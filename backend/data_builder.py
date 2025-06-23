@@ -4,6 +4,9 @@ from dataclasses import dataclass
 import struct
 from pydantic import BaseModel
 from typing import List
+import os
+from BTrees.OOBTree import OOBTree
+import pickle
 
 PACK_STR = 'i50si'
 PACK_SIZE = struct.calcsize(PACK_STR)
@@ -26,6 +29,13 @@ TOTAL_SIZE = PACK_SIZE + (NUM_REDES * REDE_PACK_SIZE)
 #    ideb2019: float
 #    ideb2021: float
 #    ideb2023: float
+
+CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzáàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ -'
+CHAR_TO_INDEX = {c: i for i, c in enumerate(CHARSET)}
+INDEX_TO_CHAR = {i: c for i, c in enumerate(CHARSET)}
+MAX_CHILDREN = len(CHARSET)
+MAX_OFFSETS = 3  # número fixo de offsets
+NODE_SIZE = 1 + 4 * MAX_OFFSETS + 4 * MAX_CHILDREN  # total em bytes por nó
 
 #NEW DEFINITION
 class RedesOut(BaseModel):
@@ -218,56 +228,7 @@ class DataFactory:
                 prefix_root_tree.states[self._state_value(sg_uf)].insert(nome_municipio, (counter  * TOTAL_SIZE))
                 counter = counter + 1
             return prefix_root_tree
-                
-
-
-#Takes a dataframe as input and returns a list of MunicipiosOut (POR FAZER)
-def df_to_list(datafr) -> List[MunicipioOut]:
-
-    estados_map = {"RS": 0, "SC": 1, "PR": 2}
-
-    municipios_dict = {}
-
-    for _,row in datafr.iterrows():
-        cod_mun = row['COD_MUNICIPIO']
-
-        if cod_mun  not in municipios_dict:
-            mun = MunicipioOut(
-                cod_municipio = cod_mun,
-                nome = row['NOME_MUNICIPIO'],
-                estado = row['SG_UF'],
-                redes = []
-            )
-
-        municipios_dict[cod_mun] = mun
-
-        id17 = -1
-        id19 = -1
-        id21 = -1
-        id23 = -1
-
-        if row['IDEB_2017'] != '-':
-            id17 = float(row['IDEB_2017'])
-        if row['IDEB_2019'] != '-':
-            id19 = float(row['IDEB_2019'])
-        if row['IDEB_2021'] != '-':
-            id21 = float(row['IDEB_2021'])
-        if row['IDEB_2023'] != '-':
-            id23 = float(row['IDEB_2023'])
-       
-        rede_obj = RedesOut(
-            rede = row['REDE'],
-            ideb2017 = id17,
-            ideb2019 = id19,
-            ideb2021 = id21,
-            ideb2023 = id23
-        )
-
-        municipios_dict[cod_mun].redes.append(rede_obj)
-
-    return list(municipios_dict.values())
-
-
+        
 class Trie_Node:
     def __init__(self):
         self.is_word = False
@@ -373,15 +334,73 @@ class Trie:
 
         _dfs(current_node)
         return offsets
-        
-        
-    def to_bytes(self):
-        pass
-    
-    def get_bytes(self):
-        pass
+
 
 
 class Trie_Root:
     def __init__(self):
         self.states = {0: Trie(), 1: Trie(), 2: Trie()} # 0 - RS, 1 - SC, - 2 PR
+
+
+class SaebGrades:
+    def __init__(self, math: float, port: float, final_grade: float):
+        self.math = math
+        self.port = port
+        self.final_grade = final_grade
+
+    def __repr__(self):
+        return f"SaebGrades(math={self.math}, port={self.port}, final={self.final_grade})"
+
+class RedeData:
+    def __init__(self, rede: int):
+        self.rede = rede
+        self.ideb = {
+            2017: None,
+            2019: None,
+            2021: None,
+            2023: None,
+        }
+        self.saeb = {
+            2017: None,
+            2019: None,
+            2021: None,
+            2023: None,
+        }
+
+    def set_ideb(self, year: int, grade: float):
+        if year in self.ideb:
+            self.ideb[year] = grade
+
+    def set_saeb(self, year: int, math: float, port: float, final_grade: float):
+        if year in self.saeb:
+            self.saeb[year] = SaebGrades(math, port, final_grade)
+    
+    def __repr__(self):
+        return f"RedeData(rede={self.rede}, ideb={self.ideb}, saeb={self.saeb})"
+
+class MunicipioBTreeEntry:
+    def __init__(self, cod_municipio: int):
+        self.cod_municipio = cod_municipio
+        self.redes: list[RedeData] = []
+
+    def add_rede(self, rede: RedeData):
+        self.redes.append(rede)
+
+    def __repr__(self):
+        return f"MunicipioBTreeEntry(cod={self.cod_municipio}, redes={self.redes})"
+
+def save_trie_root(r: Trie_Root):
+    with open("trie.bin", "wb") as f:
+        pickle.dump(r, f)
+
+def load_trie_root():
+    with open("trie.bin", "rb") as f:
+        return pickle.load(f)
+    
+def save_btree(b: OOBTree):
+    with open("btree.bin", "wb") as f:
+        pickle.dump(b, f)
+
+def load_btree():
+    with open("btree.bin", "rb") as f:
+        return pickle.load(f)

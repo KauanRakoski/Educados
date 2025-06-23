@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, df_to_list, RedesOut, Trie_Root
+from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, RedesOut, Trie_Root
 import os
 import struct
 from fastapi import FastAPI
