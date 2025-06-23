@@ -65,8 +65,10 @@ if __name__ == "__main__":
 
     r = Trie_Root()
     b = OOBTree()
-#    datafact = DataFactory()
-#    b = datafact.pipeline_to_file("data.csv")
+    datafact = DataFactory()
+    b = datafact.pipeline_to_file("data.csv")
+    save_btree(b)
+    save_trie_root(r)
     r = load_trie_root()
     b = load_btree()
     

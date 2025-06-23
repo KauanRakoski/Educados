@@ -182,7 +182,7 @@ class DataFactory:
         grouped_data = self.data.groupby(['COD_MUNICIPIO'])
         # Iterate through groups and print
         
-        with open('data2.bin', 'wb') as f:
+        with open('data.bin', 'wb') as f:
             
             counter = 0
             prefix_root_tree = Trie_Root()
