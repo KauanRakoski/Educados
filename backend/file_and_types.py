@@ -74,6 +74,21 @@ class MunicipioSaeb:
 
     def __repr__(self):
         return f"MunicipioSaeb(cod_municipio={self.cod_municipio}, redes={self.redes})"
+
+class SaebNotasOut(BaseModel):
+    math : float 
+    port: float 
+    final: float 
+class RedeSaebOut(BaseModel):
+    codigo_rede: int
+    saeb2017: SaebNotasOut 
+    saeb2019: SaebNotasOut 
+    saeb2021: SaebNotasOut 
+    saeb2023: SaebNotasOut
+
+class MunicipioSaebOut(BaseModel):
+    cod_municipio: int
+    redes: List[RedeSaebOut]
     
 
 
@@ -181,6 +196,10 @@ class Municipio:
             offset += REDE_PACK_SIZE
 
         return cls(cod_municipio, nome, estado, redes_data)
+    
+class MunBTreeOut(BaseModel):
+    municipio: MunicipioOut | None
+    saeb: MunicipioSaebOut | None
     
 
 # +++++++++++++++++++++++++

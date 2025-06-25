@@ -59,24 +59,30 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
         return extract_state(status, r)
     return extract_state_name(r, name, status)
 
-@app.get('/municipio/{cod_mun}', response_model = int)
+#@app.get('/municipio/{cod_mun}', response_model = int)
+#def teste(cod_mun : int):
+#   extract_saeb(cod_mun, b)
+#   return cod_mun
+
+@app.get('/municipio/{cod_mun}', response_model = MunBTreeOut)
 def teste(cod_mun : int):
-   extract_saeb(cod_mun, b)
-   return cod_mun
+   return MunBTreeOut(municipio = extract_saeb(cod_mun,b), saeb = extract_saeb_data(cod_mun, b))
     
 if __name__ == "__main__":
 
     r = Trie_Root()
     b = OOBTree()
     
-    datafact = DataFactory()
-    r, b = datafact.pipeline_to_file("data.csv")
+    #datafact = DataFactory()
+    #r, b = datafact.pipeline_to_file("data.csv")
     
-    TreeHandler.save_btree(b)
-    TreeHandler.save_trie_root(r)
+    #TreeHandler.save_btree(b)
+    #TreeHandler.save_trie_root(r)
     
     r = TreeHandler.load_trie_root()
     b = TreeHandler.load_btree()
+
+#    print(extract_MunicipioSaeb_at_offset(b[4100103].saeb_data_offset), "saeb.bin")
     
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
 

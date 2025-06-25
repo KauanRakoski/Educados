@@ -277,9 +277,62 @@ def extract_town_at_offset(offset: int,
         redes         = list_redes
     )
 
+def extract_MunicipioSaeb_at_offset(offset: int, path: str = 'saeb.bin') -> MunicipioSaeb:
+    with open(path, 'rb') as f:
+        f.seek(offset)
+        municipio_saeb: MunicipioSaeb = pickle.load(f)
+        return municipio_saeb
+    
+def MunicipioSaeb_to_MunicipioSaebOut(mun: MunicipioSaeb):
+
+#    munout=MunicipioSaebOut
+
+    return None
+'''
+def MunicipioSaeb_to_MunicipioSaebOut(mun: MunicipioSaeb) -> MunicipioSaebOut:
+    redes_out = []
+
+    for codigo_rede, rede in mun.redes.items():
+        rede_out = RedeSaebOut(
+            codigo_rede=codigo_rede,
+            saeb2017=SaebNotasOut(
+                math=rede.saeb[2017].math,
+                port=rede.saeb[2017].port,
+                final=rede.saeb[2017].final
+            ) if rede.saeb[2017] else None,
+            saeb2019=SaebNotasOut(
+                math=rede.saeb[2019].math,
+                port=rede.saeb[2019].port,
+                final=rede.saeb[2019].final
+            ) if rede.saeb[2019] else None,
+            saeb2021=SaebNotasOut(
+                math=rede.saeb[2021].math,
+                port=rede.saeb[2021].port,
+                final=rede.saeb[2021].final
+            ) if rede.saeb[2021] else None,
+            saeb2023=SaebNotasOut(
+                math=rede.saeb[2023].math,
+                port=rede.saeb[2023].port,
+                final=rede.saeb[2023].final
+            ) if rede.saeb[2023] else None
+        )
+        redes_out.append(rede_out)
+
+    return MunicipioSaebOut(
+        cod_municipio=mun.cod_municipio,
+        redes=redes_out
+    )
+'''
+
+def extract_saeb_data(cod_mun: int, b: OOBTree):
+    mun = extract_MunicipioSaeb_at_offset(b[cod_mun].saeb_data_offset, "saeb.bin")
+    munout = MunicipioSaeb_to_MunicipioSaebOut(mun)
+    return munout
+
 def extract_saeb(cod_mun: int, b: OOBTree):
     main_offset = b[cod_mun].main_data_offset;
-    print(extract_town_at_offset(main_offset))
+    #print(extract_town_at_offset(main_offset))
+    return extract_town_at_offset(main_offset)
 
 
 
