@@ -78,8 +78,9 @@ if __name__ == "__main__":
     r = TreeHandler.load_trie_root()
     b = TreeHandler.load_btree()
 
-#    print(extract_MunicipioSaeb_at_offset(b[4100103].saeb_data_offset), "saeb.bin")
-    
+#    print(extract_MunicipioSaeb_at_offset(b[4100202].saeb_data_offset), "saeb.bin")
+
+
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
 
 

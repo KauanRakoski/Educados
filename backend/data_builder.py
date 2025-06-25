@@ -102,10 +102,10 @@ class DataFactory:
                     
                     rede_saeb_atual = saebData.get_rede(rede_type)
                     
-                    rede_saeb_atual.set_saeb(2017, math = row['SAEB_MAT_2017'], port = row['SAEB_PORT_2017'], final = row['SAEB_NOTA_2017'])
-                    rede_saeb_atual.set_saeb(2019, math = row['SAEB_MAT_2019'], port = row['SAEB_PORT_2019'], final = row['SAEB_NOTA_2019'])
-                    rede_saeb_atual.set_saeb(2021, math = row['SAEB_MAT_2021'], port = row['SAEB_PORT_2021'], final = row['SAEB_NOTA_2021'])
-                    rede_saeb_atual.set_saeb(2023, math = row['SAEB_MAT_2023'], port = row['SAEB_PORT_2023'], final = row['SAEB_NOTA_2023'])
+                    rede_saeb_atual.set_saeb(2017, math = safe_float(row['SAEB_MAT_2017']), port = safe_float(row['SAEB_PORT_2017']), final = safe_float(row['SAEB_NOTA_2017']))
+                    rede_saeb_atual.set_saeb(2019, math = safe_float(row['SAEB_MAT_2019']), port = safe_float(row['SAEB_PORT_2019']), final = safe_float(row['SAEB_NOTA_2019']))
+                    rede_saeb_atual.set_saeb(2021, math = safe_float(row['SAEB_MAT_2021']), port = safe_float(row['SAEB_PORT_2021']), final = safe_float(row['SAEB_NOTA_2021']))
+                    rede_saeb_atual.set_saeb(2023, math = safe_float(row['SAEB_MAT_2023']), port = safe_float(row['SAEB_PORT_2023']), final = safe_float(row['SAEB_NOTA_2023']))
                     
                     pickle.dump(saebData, f2)
 
@@ -131,3 +131,13 @@ class DataFactory:
                 btree[cod_municipio] = mun_btree
 
             return prefix_root_tree, btree
+        
+
+def initialize_api():
+    pass
+
+def safe_float(value) -> float:
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return 0.0
