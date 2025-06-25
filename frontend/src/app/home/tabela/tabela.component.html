@@ -56,7 +56,7 @@
                 @for (stat of data; track stat){
                     <tr>
                         <td>{{stat.estado}}</td>
-                        <td><a [routerLink]="['/municipio', stat.cod_municipio]">{{stat.nome}}</a></td>
+                        <td><a [routerLink]="['/municipio', stat.cod_municipio, stat.rede]">{{stat.nome}}</a></td>
                         <td>{{redeFromCode(stat.rede)}}</td>
                         <td>{{truncateFloat(stat.ideb2017)}}</td>
                         <td>{{truncateFloat(stat.ideb2019)}}</td>

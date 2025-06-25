@@ -283,12 +283,7 @@ def extract_MunicipioSaeb_at_offset(offset: int, path: str = 'saeb.bin') -> Muni
         municipio_saeb: MunicipioSaeb = pickle.load(f)
         return municipio_saeb
     
-def MunicipioSaeb_to_MunicipioSaebOut(mun: MunicipioSaeb):
 
-#    munout=MunicipioSaebOut
-
-    return None
-'''
 def MunicipioSaeb_to_MunicipioSaebOut(mun: MunicipioSaeb) -> MunicipioSaebOut:
     redes_out = []
 
@@ -322,7 +317,7 @@ def MunicipioSaeb_to_MunicipioSaebOut(mun: MunicipioSaeb) -> MunicipioSaebOut:
         cod_municipio=mun.cod_municipio,
         redes=redes_out
     )
-'''
+
 
 def extract_saeb_data(cod_mun: int, b: OOBTree):
     mun = extract_MunicipioSaeb_at_offset(b[cod_mun].saeb_data_offset, "saeb.bin")
@@ -331,7 +326,6 @@ def extract_saeb_data(cod_mun: int, b: OOBTree):
 
 def extract_saeb(cod_mun: int, b: OOBTree):
     main_offset = b[cod_mun].main_data_offset;
-    #print(extract_town_at_offset(main_offset))
     return extract_town_at_offset(main_offset)
 
 

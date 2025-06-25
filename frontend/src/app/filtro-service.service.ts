@@ -11,6 +11,10 @@ export class FiltroService {
   private nameSubject = new BehaviorSubject<string>('')
   private estadoSubject = new BehaviorSubject<string>('')
   private redeSubject = new BehaviorSubject<number>(3)
+
+  public nameFilter$ = this.nameSubject.asObservable();
+  public estadoFilter$ = this.estadoSubject.asObservable();
+  public redeFilter$ = this.redeSubject.asObservable();
   
  
   // Observável público que agrega os filtros

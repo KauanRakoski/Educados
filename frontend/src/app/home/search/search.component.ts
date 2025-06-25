@@ -1,15 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { FiltroService } from '../../filtro-service.service';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-search',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './search.component.html',
   styleUrl: './search.component.css'
 })
 export class SearchComponent {
-  private filtroService = inject(FiltroService)
+  public filtroService = inject(FiltroService)
 
   updateNameFilter(event: Event): void {
     this.filtroService.updateNameFilter((event.target as HTMLInputElement).value);

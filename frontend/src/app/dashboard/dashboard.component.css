@@ -1,11 +1,28 @@
 .container {
-    padding: 1em;
+    padding: 1em 3em 1em 3em;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 }
 .data-cells, .data-cell {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+.data-cells-fst {
+    margin-left: 130px;
+    display: flex;
+    flex-direction: column;
+}
+.data-cells-fst p {
+    margin-right: 30px;
+}
+.ml-50 {
+    margin-left: 130px;
+}
+
 .data-cell {
     margin-right: 30px;
 }

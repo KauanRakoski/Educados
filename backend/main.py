@@ -59,10 +59,6 @@ def get_data(state: Optional[str] = None, name: Optional[str] = None):
         return extract_state(status, r)
     return extract_state_name(r, name, status)
 
-#@app.get('/municipio/{cod_mun}', response_model = int)
-#def teste(cod_mun : int):
-#   extract_saeb(cod_mun, b)
-#   return cod_mun
 
 @app.get('/municipio/{cod_mun}', response_model = MunBTreeOut)
 def teste(cod_mun : int):
@@ -73,11 +69,11 @@ if __name__ == "__main__":
     r = Trie_Root()
     b = OOBTree()
     
-    #datafact = DataFactory()
-    #r, b = datafact.pipeline_to_file("data.csv")
-    
-    #TreeHandler.save_btree(b)
-    #TreeHandler.save_trie_root(r)
+    datafact = DataFactory()
+    r, b = datafact.pipeline_to_file("data.csv")
+
+    TreeHandler.save_btree(b)
+    TreeHandler.save_trie_root(r)
     
     r = TreeHandler.load_trie_root()
     b = TreeHandler.load_btree()
