@@ -1,4 +1,4 @@
-from data_builder import DataFactory, Municipio, ListMunicipioOut, MunicipioOut, RedesOut, Trie_Root, MunicipioSaebOut, MunicipioBTreeEntry
+from file_and_types import *
 import os
 import struct
 from fastapi import FastAPI
@@ -227,8 +227,59 @@ def extract_state_name(r:Trie_Root, name : str, state:int) -> ListMunicipioOut:
     
     return lista_municipios
 
-def extract_saeb(cod_mun: int, b: OOBTree) -> MunicipioSaebOut:
-    pass
+
+
+def extract_town_at_offset(offset: int, 
+                           path: str = None, 
+                           total_size: int = TOTAL_SIZE
+                          ) -> MunicipioOut | None:
+    """
+    Lê exatamente um município a partir de `offset` no arquivo `data.bin`
+    e retorna o objeto MunicipioOut correspondente, ou None se não houver
+    bytes suficientes.
+    """
+    # usa o mesmo data.bin do módulo (ou receba path customizado)
+    if path is None:
+        path = os.path.join(os.path.dirname(__file__), "data.bin")
+
+    with open(path, "rb") as f:
+        f.seek(offset)
+        buf = f.read(total_size)
+        if len(buf) < total_size:
+            # não há dado completo ali
+            return None
+
+        # desserializa para a estrutura interna
+        m = Municipio.get_bytes(buf)
+
+    # converte o código de estado em string
+    if   m.estado == 0: state_value = 'RS'
+    elif m.estado == 1: state_value = 'SC'
+    else:               state_value = 'PR'
+
+    # mapea as redes internas para o output
+    list_redes: list[RedesOut] = []
+    for rede_entry in m.redes[:NUM_REDES]:
+        r_out = RedesOut(
+            rede     = rede_entry.rede,
+            ideb2017 = rede_entry.ideb2017,
+            ideb2019 = rede_entry.ideb2019,
+            ideb2021 = rede_entry.ideb2021,
+            ideb2023 = rede_entry.ideb2023
+        )
+        list_redes.append(r_out)
+
+    # monta e retorna o MunicipioOut
+    return MunicipioOut(
+        cod_municipio = m.cod_municipio,
+        nome          = m.nome,
+        estado        = state_value,
+        redes         = list_redes
+    )
+
+def extract_saeb(cod_mun: int, b: OOBTree):
+    main_offset = b[cod_mun].main_data_offset;
+    print(extract_town_at_offset(main_offset))
 
 
 
