@@ -68,19 +68,9 @@ if __name__ == "__main__":
 
     r = Trie_Root()
     b = OOBTree()
+
+    r, b = initialize_api()
     
-    datafact = DataFactory()
-    r, b = datafact.pipeline_to_file("data.csv")
-
-    TreeHandler.save_btree(b)
-    TreeHandler.save_trie_root(r)
-    
-    r = TreeHandler.load_trie_root()
-    b = TreeHandler.load_btree()
-
-#    print(extract_MunicipioSaeb_at_offset(b[4100202].saeb_data_offset), "saeb.bin")
-
-
     uvicorn.run(app, host = "0.0.0.0", port = 5000)
 
 

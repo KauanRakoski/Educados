@@ -134,7 +134,45 @@ class DataFactory:
         
 
 def initialize_api():
-    pass
+
+    nome_trie = "trie.bin"
+    nome_data = "data.bin"
+    nome_b = "btree.bin"
+    nome_saeb = "saeb.bin"
+
+    r = Trie_Root()
+    b = OOBTree()
+
+    datafact = DataFactory()
+
+
+    if os.path.exists(nome_data):
+        if os.path.exists(nome_saeb):
+            if os.path.exists(nome_trie):
+                if os.path.exists(nome_b):
+                    r = TreeHandler.load_trie_root()
+                    b = TreeHandler.load_btree()
+                else:
+                    r, b = datafact.pipeline_to_file("data.csv")
+                    TreeHandler.save_btree(b)
+                    TreeHandler.save_trie_root(r)
+            else:
+                r, b = datafact.pipeline_to_file("data.csv")
+                TreeHandler.save_btree(b)
+                TreeHandler.save_trie_root(r)
+        else:
+            r, b = datafact.pipeline_to_file("data.csv")
+            TreeHandler.save_btree(b)
+            TreeHandler.save_trie_root(r)
+    else:
+        r, b = datafact.pipeline_to_file("data.csv")
+        TreeHandler.save_btree(b)
+        TreeHandler.save_trie_root(r)
+    
+    return r,b
+
+                    
+        
 
 def safe_float(value) -> float:
     try:
