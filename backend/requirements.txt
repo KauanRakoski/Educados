@@ -1,0 +1,5 @@
+pandas
+btrees
+fastapi
+pydantic
+uvicorn
